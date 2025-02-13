@@ -1,0 +1,1 @@
+package golangcilint_test
