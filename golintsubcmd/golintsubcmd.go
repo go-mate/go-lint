@@ -26,9 +26,9 @@ func Run(config *workconfig.WorkspacesExecConfig, timeout time.Duration) {
 	projects := config.CollectSubprojectPaths()
 	zaplog.SUG.Debugln("lint", neatjsons.S(projects))
 
-	output := rese.V1(config.GetSubCommand("").Exec("golangci-lint", "version"))
+	output := rese.V1(config.GetNewCommand().Exec("golangci-lint", "version"))
 	zaplog.SUG.Debugln(string(output))
 
-	resMap := goworkcilint.Run(config.GetSubCommand(""), projects, timeout)
+	resMap := goworkcilint.Run(config.GetNewCommand(), projects, timeout)
 	goworkcilint.DebugIssues(projects, resMap)
 }
