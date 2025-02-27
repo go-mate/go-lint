@@ -5,16 +5,16 @@ go 1.22.8
 require (
 	github.com/go-mate/go-work v0.0.2
 	github.com/golangci/golangci-lint v1.63.5-0.20250204215304-2b24c4ea48bf
-	github.com/spf13/cobra v1.8.1
-	github.com/yyle88/erero v1.0.17
-	github.com/yyle88/eroticgo v0.0.2
-	github.com/yyle88/must v0.0.13
+	github.com/spf13/cobra v1.9.1
+	github.com/yyle88/erero v1.0.18
+	github.com/yyle88/eroticgo v0.0.3
+	github.com/yyle88/must v0.0.16
 	github.com/yyle88/neatjson v0.0.11
-	github.com/yyle88/osexec v0.0.20
+	github.com/yyle88/osexec v0.0.22
 	github.com/yyle88/osexistpath v0.0.16
 	github.com/yyle88/rese v0.0.3
 	github.com/yyle88/runpath v1.0.23
-	github.com/yyle88/zaplog v0.0.19
+	github.com/yyle88/zaplog v0.0.20
 	go.uber.org/zap v1.27.0
 )
 
@@ -47,11 +47,11 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/yyle88/done v1.0.21 // indirect
+	github.com/yyle88/done v1.0.22 // indirect
 	github.com/yyle88/mutexmap v1.0.10 // indirect
 	github.com/yyle88/printgo v1.0.2 // indirect
 	github.com/yyle88/sure v0.0.36 // indirect
-	github.com/yyle88/syntaxgo v0.0.44 // indirect
+	github.com/yyle88/syntaxgo v0.0.45 // indirect
 	github.com/yyle88/tern v0.0.5 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect

@@ -29,6 +29,6 @@ func Run(config *workconfig.WorkspacesExecConfig, timeout time.Duration) {
 	output := rese.V1(config.GetNewCommand().Exec("golangci-lint", "version"))
 	zaplog.SUG.Debugln(string(output))
 
-	resMap := goworkcilint.Run(config.GetNewCommand(), projects, timeout)
-	goworkcilint.DebugIssues(projects, resMap)
+	result := goworkcilint.Run(config.GetNewCommand(), projects, timeout)
+	goworkcilint.DebugIssues(projects, result)
 }

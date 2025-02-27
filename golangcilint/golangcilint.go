@@ -20,49 +20,53 @@ import (
 )
 
 type Result struct {
-	RawMessage []byte
-	Warnings   []string
 	LintResult *printers.JSONResult
+	Warnings   []string
+	RawMessage []byte
 }
 
 func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) (*Result, error) {
-	lintResult := &printers.JSONResult{}
-	outputData, err := execConfig.ShallowClone().WithPath(path).Exec("golangci-lint", "run", "--out-format", "json", "--timeout", timeout.String())
+	rawMessage, err := execConfig.ShallowClone().WithPath(path).Exec("golangci-lint", "run", "--out-format", "json", "--timeout", timeout.String())
 	if err != nil {
 		zaplog.LOG.Debug("reason:", zap.Error(err))
 
-		//假如能够顺利的转化为结果，返回 issues
-		if json.Unmarshal(outputData, lintResult) == nil {
-			res := &Result{
-				RawMessage: outputData,
-				Warnings:   nil,
-				LintResult: lintResult,
-			}
-			debugLintMessage(res)
-			return res, nil
+		//假如能够顺利的转化为 json 结果，返回 issues
+		if res := parseMessage(rawMessage); res != nil {
+			return debugMessage(res), nil
 		}
 
 		//假如排除 warning 以后能够转化为 json 结果，也返回 issues
-		if res := parseLintOutput(strings.Split(string(outputData), "\n")); res != nil {
-			debugLintMessage(res)
-			return res, nil
+		if res := parseIgnoreWarningMessage(strings.Split(string(rawMessage), "\n")); res != nil {
+			return debugMessage(res), nil
 		}
 
 		//当代码有大错时，没法返回细致的 issues，这时就需要把这个大错显示出来
-		zaplog.SUG.Errorln("output:", string(outputData))
+		zaplog.SUG.Errorln("message:", string(rawMessage))
 		return nil, erero.Wro(err)
 	}
-	must.Done(json.Unmarshal(outputData, lintResult))
-	res := &Result{
-		RawMessage: outputData,
+	resultLint := &printers.JSONResult{}
+	must.Done(json.Unmarshal(rawMessage, resultLint))
+	return debugMessage(&Result{
+		LintResult: resultLint,
 		Warnings:   nil,
-		LintResult: lintResult,
-	}
-	debugLintMessage(res)
-	return res, nil
+		RawMessage: rawMessage,
+	}), nil
 }
 
-func debugLintMessage(res *Result) {
+func parseMessage(rawMessage []byte) *Result {
+	resultLint := &printers.JSONResult{}
+	if err := json.Unmarshal(rawMessage, resultLint); err != nil {
+		zaplog.LOG.Debug("reason:", zap.Error(err))
+		return nil
+	}
+	return &Result{
+		LintResult: resultLint,
+		Warnings:   nil,
+		RawMessage: rawMessage,
+	}
+}
+
+func debugMessage(res *Result) *Result {
 	zaplog.SUG.Debugln("message:", neatjsons.SxB(res.RawMessage))
 	for _, warning := range res.Warnings {
 		zaplog.SUG.Warnln("warning:", warning)
@@ -70,39 +74,45 @@ func debugLintMessage(res *Result) {
 	for _, issue := range res.LintResult.Issues {
 		zaplog.SUG.Errorln(issue.Text)
 	}
+	return res
 }
 
-func parseLintOutput(outputLines []string) *Result {
+func parseIgnoreWarningMessage(msgLines []string) *Result {
 	var warnings []string
 	var jsonLineCount = 0
 	var jsonLine string
-	var unknown = false
-	for _, textLine := range outputLines {
-		if textLine == "" {
+	var unknownOutput = false
+	for _, msg := range msgLines {
+		if msg == "" {
 			continue
-		} else if strings.HasPrefix(textLine, "level=warning") {
-			zaplog.SUG.Warnln(textLine)
-			warnings = append(warnings, textLine)
-		} else if strings.HasPrefix(textLine, "{") && strings.HasSuffix(textLine, "}") {
+		} else if strings.HasPrefix(msg, "level=warning") {
+			zaplog.SUG.Warnln(msg)
+			warnings = append(warnings, msg)
+		} else if strings.HasPrefix(msg, "{") && strings.HasSuffix(msg, "}") {
 			jsonLineCount++
-			jsonLine = textLine
+			jsonLine = msg
 		} else {
-			unknown = true
-			zaplog.SUG.Errorln(textLine)
+			unknownOutput = true
+			zaplog.SUG.Errorln(msg)
 		}
 	}
-	if !unknown && jsonLineCount == 1 {
-		res := &printers.JSONResult{}
-		rawOutput := []byte(jsonLine)
-		if json.Unmarshal(rawOutput, res) == nil {
-			return &Result{
-				RawMessage: rawOutput,
-				Warnings:   warnings,
-				LintResult: res,
-			}
-		}
+	if unknownOutput {
+		return nil
 	}
-	return nil
+	if jsonLineCount != 1 {
+		return nil
+	}
+	resultLint := &printers.JSONResult{}
+	rawMessage := []byte(jsonLine)
+	if err := json.Unmarshal(rawMessage, resultLint); err != nil {
+		zaplog.LOG.Debug("reason:", zap.Error(err))
+		return nil
+	}
+	return &Result{
+		LintResult: resultLint,
+		Warnings:   warnings,
+		RawMessage: rawMessage,
+	}
 }
 
 func DebugIssues(root string, issues []result.Issue) {

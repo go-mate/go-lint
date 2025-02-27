@@ -8,17 +8,14 @@ import (
 	"time"
 
 	"github.com/go-mate/go-lint/golangcilint"
-	"github.com/golangci/golangci-lint/pkg/result"
 	"github.com/yyle88/eroticgo"
 	"github.com/yyle88/osexec"
 )
 
 type Result struct {
-	Path       string
-	CmdExecErr error
-	RawMessage []byte
-	Warnings   []string
-	LintIssues []result.Issue
+	Path string
+	Err  error
+	Res  *golangcilint.Result
 }
 
 func Run(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) map[string]*Result {
@@ -28,11 +25,9 @@ func Run(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) m
 		if err != nil {
 			fmt.Println(eroticgo.RED.Sprint("path:", projectPath, "reason:", err))
 			resMap[projectPath] = &Result{
-				Path:       projectPath,
-				CmdExecErr: err,
-				RawMessage: []byte{},
-				Warnings:   []string{},
-				LintIssues: nil,
+				Path: projectPath,
+				Err:  err,
+				Res:  nil,
 			}
 			continue
 		}
@@ -40,11 +35,9 @@ func Run(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) m
 			fmt.Println(eroticgo.RED.Sprint("path:", projectPath, "issues:"))
 			golangcilint.DebugIssues(projectPath, res.LintResult.Issues)
 			resMap[projectPath] = &Result{
-				Path:       projectPath,
-				CmdExecErr: nil,
-				RawMessage: res.RawMessage,
-				Warnings:   res.Warnings,
-				LintIssues: res.LintResult.Issues,
+				Path: projectPath,
+				Err:  nil,
+				Res:  res,
 			}
 			continue
 		}
@@ -72,10 +65,10 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 				fmt.Println(eroticgo.RED.Sprint("(", idx, ")", "path:", path))
 				fmt.Println(eroticgo.BLUE.Sprint("cd", path, "&&", strings.Join([]string{"golangci-lint", "run", "--out-format", "json"}, " ")))
 				fmt.Println(eroticgo.BLUE.Sprint("--"))
-				if res.CmdExecErr != nil {
+				if res.Err != nil {
 					cnt++
-					fmt.Println(eroticgo.RED.Sprint("command-execute-error-message:", res.CmdExecErr))
-				} else if issues := res.LintIssues; len(issues) > 0 {
+					fmt.Println(eroticgo.RED.Sprint("command-execute-error-message:", res.Err))
+				} else if issues := res.Res.LintResult.Issues; len(issues) > 0 {
 					cnt += len(issues)
 					golangcilint.DebugIssues(path, issues)
 				}
@@ -96,11 +89,11 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 				if !ok {
 					continue
 				}
-				if res.CmdExecErr != nil {
+				if res.Err != nil {
 					fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
 					cnt++
-					fmt.Println(eroticgo.RED.Sprint("command-execute-error-message:", res.CmdExecErr))
-				} else if issues := res.LintIssues; len(issues) > 0 {
+					fmt.Println(eroticgo.RED.Sprint("command-execute-error-message:", res.Err))
+				} else if issues := res.Res.LintResult.Issues; len(issues) > 0 {
 					for _, issue := range issues {
 						fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
 						cnt++
