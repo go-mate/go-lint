@@ -63,7 +63,7 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 
 				fmt.Println(eroticgo.BLUE.Sprint("--"))
 				fmt.Println(eroticgo.RED.Sprint("(", idx, ")", "path:", path))
-				fmt.Println(eroticgo.BLUE.Sprint("cd", path, "&&", strings.Join([]string{"golangci-lint", "run", "--out-format", "json"}, " ")))
+				fmt.Println(eroticgo.BLUE.Sprint("cd", path, "&&", strings.Join([]string{"golangci-lint run --output.json.path=stdout --show-stats=false --timeout=5m0s"}, " ")))
 				fmt.Println(eroticgo.BLUE.Sprint("--"))
 				if res.Err != nil {
 					cnt++

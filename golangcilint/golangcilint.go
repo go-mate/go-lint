@@ -26,7 +26,7 @@ type Result struct {
 }
 
 func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) (*Result, error) {
-	rawMessage, err := execConfig.ShallowClone().WithPath(path).Exec("golangci-lint", "run", "--out-format", "json", "--timeout", timeout.String())
+	rawMessage, err := execConfig.ShallowClone().WithPath(path).Exec("golangci-lint", "run", "--output.json.path=stdout", "--show-stats=false", "--timeout="+timeout.String())
 	if err != nil {
 		zaplog.LOG.Debug("reason:", zap.Error(err))
 
