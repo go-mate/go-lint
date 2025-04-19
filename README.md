@@ -1,21 +1,42 @@
-# go-lint
-golangci-lint run with golang os/exec
+<p align="center">
+  <img alt="golangci-lint logo" src="assets/golangci-lint-logo.jpeg" height="500" />
+</p>
+<h3 align="center">golangci-lint</h3>
+<p align="center">execute <code>golangci-lint run</code> with golang os/exec</p>
 
-support version:
-``` bash
+---
+
+# go-lint
+Execute `golangci-lint run` with Golang's `os/exec`.
+
+**Supported version:**
+```bash
 golangci-lint version
 ```
 
-``` text
+Output:
+```text
 golangci-lint has version 2.0.2 built with go1.24.1 from 2b224c2 on 2025-03-25T20:33:26Z
 ```
 
 ## License
 
-MIT License - See the `LICENSE` file for more details.
+MIT License. See [LICENSE](LICENSE).
 
-## Thank you
+---
 
-Give me stars. Thank you!!!
+## Support
 
-[![starring](https://starchart.cc/go-mate/go-lint.svg?variant=adaptive)](https://starchart.cc/go-mate/go-lint)
+Welcome to contribute to this project by submitting pull requests and reporting issues.
+
+If you find this package valuable, give me some stars on GitHub! Thank you!!!
+
+**Thank you for your support!**
+
+**Happy Coding with `go-lint`!** 🎉
+
+---
+
+## GitHub Stars
+
+[![Stargazers](https://starchart.cc/go-mate/go-lint.svg?variant=adaptive)](https://starchart.cc/go-mate/go-lint)
