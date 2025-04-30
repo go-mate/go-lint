@@ -13,31 +13,31 @@ import (
 )
 
 type Result struct {
-	Path string
-	Err  error
-	Res  *golangcilint.Result
+	Path   string
+	Reason string
+	Result *golangcilint.Result
 }
 
 func Run(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) map[string]*Result {
 	var resMap = map[string]*Result{}
-	for _, projectPath := range roots {
-		res, err := golangcilint.Run(execConfig, projectPath, timeout)
+	for _, path := range roots {
+		lintResult, err := golangcilint.Run(execConfig, path, timeout)
 		if err != nil {
-			fmt.Println(eroticgo.RED.Sprint("path:", projectPath, "reason:", err))
-			resMap[projectPath] = &Result{
-				Path: projectPath,
-				Err:  err,
-				Res:  nil,
+			fmt.Println(eroticgo.RED.Sprint("path:", path, "reason:", err))
+			resMap[path] = &Result{
+				Path:   path,
+				Reason: err.Error(),
+				Result: nil,
 			}
 			continue
 		}
-		if len(res.LintResult.Issues) > 0 {
-			fmt.Println(eroticgo.RED.Sprint("path:", projectPath, "issues:"))
-			golangcilint.DebugIssues(projectPath, res.LintResult.Issues)
-			resMap[projectPath] = &Result{
-				Path: projectPath,
-				Err:  nil,
-				Res:  res,
+		if len(lintResult.Result.Issues) > 0 {
+			fmt.Println(eroticgo.RED.Sprint("path:", path, "issues:"))
+			golangcilint.DebugIssues(path, lintResult.Result.Issues)
+			resMap[path] = &Result{
+				Path:   path,
+				Reason: "",
+				Result: lintResult,
 			}
 			continue
 		}
@@ -65,10 +65,10 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 				fmt.Println(eroticgo.RED.Sprint("(", idx, ")", "path:", path))
 				fmt.Println(eroticgo.BLUE.Sprint("cd", path, "&&", strings.Join([]string{"golangci-lint run --output.json.path=stdout --show-stats=false --timeout=5m0s"}, " ")))
 				fmt.Println(eroticgo.BLUE.Sprint("--"))
-				if res.Err != nil {
+				if res.Reason != "" {
 					cnt++
-					fmt.Println(eroticgo.RED.Sprint("command-execute-error-message:", res.Err))
-				} else if issues := res.Res.LintResult.Issues; len(issues) > 0 {
+					fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-reason:", res.Reason))
+				} else if issues := res.Result.Result.Issues; len(issues) > 0 {
 					cnt += len(issues)
 					golangcilint.DebugIssues(path, issues)
 				}
@@ -89,11 +89,11 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 				if !ok {
 					continue
 				}
-				if res.Err != nil {
+				if res.Reason != "" {
 					fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
 					cnt++
-					fmt.Println(eroticgo.RED.Sprint("command-execute-error-message:", res.Err))
-				} else if issues := res.Res.LintResult.Issues; len(issues) > 0 {
+					fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-reason:", res.Reason))
+				} else if issues := res.Result.Result.Issues; len(issues) > 0 {
 					for _, issue := range issues {
 						fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
 						cnt++

@@ -26,14 +26,14 @@ func main() {
 
 	// 定义根命令
 	var rootCmd = &cobra.Command{
-		Use:   "go", // 根命令的名称
-		Short: "run",
-		Long:  "run",
+		Use:   "lint", // 根命令的名称
+		Short: "lint",
+		Long:  "lint",
 		Run: func(cmd *cobra.Command, args []string) {
-			zaplog.LOG.Info("run")
+			zaplog.LOG.Info("lint")
 		},
 	}
-	rootCmd.AddCommand(golintsubcmd.NewLintCmd(config))
+	rootCmd.AddCommand(golintsubcmd.NewRunCmd(config))
 
 	must.Done(rootCmd.Execute())
 }

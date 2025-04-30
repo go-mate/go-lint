@@ -18,7 +18,7 @@ func main() {
 	osmustexist.MustFile(filepath.Join(path, "go.mod"))
 
 	res := rese.P1(golangcilint.Run(osexec.NewCommandConfig().WithDebugMode(true), path, time.Minute*5))
-	mustslice.Have(res.RawMessage)
+	mustslice.Have(res.Output)
 	mustslice.None(res.Warnings)
-	mustslice.None(res.LintResult.Issues)
+	mustslice.None(res.Result.Issues)
 }

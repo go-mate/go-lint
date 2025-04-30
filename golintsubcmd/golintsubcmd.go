@@ -11,9 +11,9 @@ import (
 	"github.com/yyle88/zaplog"
 )
 
-func NewLintCmd(config *workcfg.WorksExec) *cobra.Command {
+func NewRunCmd(config *workcfg.WorksExec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "lint",
+		Use:   "run",
 		Short: "golangci-lint run",
 		Long:  "golangci-lint run",
 		Run: func(cmd *cobra.Command, args []string) {
