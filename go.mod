@@ -3,12 +3,12 @@ module github.com/go-mate/go-lint
 go 1.22.8
 
 require (
-	github.com/go-mate/go-work v0.0.2
+	github.com/go-mate/go-work v0.0.3
 	github.com/golangci/golangci-lint v1.63.5-0.20250204215304-2b24c4ea48bf
 	github.com/spf13/cobra v1.9.1
 	github.com/yyle88/erero v1.0.20
 	github.com/yyle88/eroticgo v0.0.3
-	github.com/yyle88/must v0.0.21
+	github.com/yyle88/must v0.0.22
 	github.com/yyle88/neatjson v0.0.12
 	github.com/yyle88/osexec v0.0.27
 	github.com/yyle88/osexistpath v0.0.17
@@ -20,6 +20,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/emirpasic/gods/v2 v2.0.0-alpha // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect

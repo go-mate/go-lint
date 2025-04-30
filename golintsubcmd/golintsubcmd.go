@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/go-mate/go-lint/goworkcilint"
-	"github.com/go-mate/go-work/workconfig"
+	"github.com/go-mate/go-work/workcfg"
 	"github.com/spf13/cobra"
 	"github.com/yyle88/neatjson/neatjsons"
 	"github.com/yyle88/rese"
 	"github.com/yyle88/zaplog"
 )
 
-func NewLintCmd(config *workconfig.WorkspacesExecConfig) *cobra.Command {
+func NewLintCmd(config *workcfg.WorksExec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "lint",
 		Short: "golangci-lint run",
@@ -22,8 +22,8 @@ func NewLintCmd(config *workconfig.WorkspacesExecConfig) *cobra.Command {
 	}
 }
 
-func Run(config *workconfig.WorkspacesExecConfig, timeout time.Duration) {
-	projects := config.CollectSubprojectPaths()
+func Run(config *workcfg.WorksExec, timeout time.Duration) {
+	projects := config.Subprojects()
 	zaplog.SUG.Debugln("lint", neatjsons.S(projects))
 
 	output := rese.V1(config.GetNewCommand().Exec("golangci-lint", "version"))
