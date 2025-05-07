@@ -24,7 +24,7 @@ func NewRunCmd(config *workcfg.WorksExec) *cobra.Command {
 
 func Run(config *workcfg.WorksExec, timeout time.Duration) {
 	projects := config.Subprojects()
-	zaplog.SUG.Debugln("lint", neatjsons.S(projects))
+	zaplog.SUG.Debugln("golangci-lint run", "PROJECTS", neatjsons.S(projects))
 
 	output := rese.V1(config.GetNewCommand().Exec("golangci-lint", "version"))
 	zaplog.SUG.Debugln(string(output))

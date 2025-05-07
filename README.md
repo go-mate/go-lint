@@ -1,5 +1,9 @@
 <p align="center">
-  <img alt="golangci-lint logo" src="assets/golangci-lint-logo.jpeg" height="500" />
+  <img 
+    alt="golangci-lint logo" 
+    src="assets/golangci-lint-logo.jpeg" 
+    style="max-height: 500px; width: auto; max-width: 100%;" 
+  />
 </p>
 <h3 align="center">golangci-lint</h3>
 <p align="center">execute <code>golangci-lint run</code> with golang os/exec</p>

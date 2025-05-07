@@ -16,7 +16,11 @@ func TestRunDebug(t *testing.T) {
 
 	workspace := workcfg.NewWorkspace("", []string{projectPath})
 
-	config := workcfg.NewWorksExec([]*workcfg.Workspace{workspace}, osexec.NewCommandConfig().WithDebugMode(true))
+	execConfig := osexec.NewCommandConfig().WithDebugMode(true)
+	workspaces := []*workcfg.Workspace{
+		workspace,
+	}
+	config := workcfg.NewWorksExec(execConfig, workspaces)
 
 	golintsubcmd.Run(config, time.Minute)
 }

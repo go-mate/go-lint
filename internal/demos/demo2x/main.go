@@ -11,18 +11,17 @@ import (
 )
 
 // go run main.go help
-// go run main.go lint
+// go run main.go run
 func main() {
 	projectPath := runpath.PARENT.Up(3)
 	zaplog.SUG.Debugln(projectPath)
 
 	workspace := workcfg.NewWorkspace("", []string{projectPath})
 
-	commandConfig := osexec.NewCommandConfig()
-	commandConfig.WithBash()
-	commandConfig.WithDebugMode(true)
+	execConfig := osexec.NewCommandConfig().WithBash().WithDebugMode(true)
+	workspaces := []*workcfg.Workspace{workspace}
 
-	config := workcfg.NewWorksExec([]*workcfg.Workspace{workspace}, commandConfig)
+	config := workcfg.NewWorksExec(execConfig, workspaces)
 
 	// 定义根命令
 	var rootCmd = &cobra.Command{
