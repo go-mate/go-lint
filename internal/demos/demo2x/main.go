@@ -1,11 +1,14 @@
 package main
 
 import (
-	"github.com/go-mate/go-lint/golintsubcmd"
+	"path/filepath"
+
+	"github.com/go-mate/go-lint/golintworks"
 	"github.com/go-mate/go-work/workcfg"
 	"github.com/spf13/cobra"
 	"github.com/yyle88/must"
 	"github.com/yyle88/osexec"
+	"github.com/yyle88/osexistpath/osmustexist"
 	"github.com/yyle88/runpath"
 	"github.com/yyle88/zaplog"
 )
@@ -14,6 +17,7 @@ import (
 // go run main.go run
 func main() {
 	projectPath := runpath.PARENT.Up(3)
+	osmustexist.MustFile(filepath.Join(projectPath, "go.mod"))
 	zaplog.SUG.Debugln(projectPath)
 
 	workspace := workcfg.NewWorkspace("", []string{projectPath})
@@ -32,7 +36,7 @@ func main() {
 			zaplog.LOG.Info("lint")
 		},
 	}
-	rootCmd.AddCommand(golintsubcmd.NewRunCmd(config))
+	rootCmd.AddCommand(golintworks.NewCmd(config))
 
 	must.Done(rootCmd.Execute())
 }

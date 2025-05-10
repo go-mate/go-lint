@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/golangci/golangci-lint/pkg/printers"
-	"github.com/golangci/golangci-lint/pkg/result"
-	"github.com/yyle88/erero"
 	"github.com/yyle88/eroticgo"
 	"github.com/yyle88/must"
 	"github.com/yyle88/neatjson/neatjsons"
@@ -20,37 +18,48 @@ import (
 )
 
 type Result struct {
+	Reason   string //when error occurs, set reason to this field
 	Result   *printers.JSONResult
 	Warnings []string
 	Output   []byte
 }
 
-func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) (*Result, error) {
+func (R *Result) Success() bool {
+	return R.Reason == "" && len(R.Warnings) == 0 && len(R.Result.Issues) == 0
+}
+
+func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Result {
 	rawMessage, err := execConfig.GetSubClone(path).Exec("golangci-lint", "run", "--output.json.path=stdout", "--show-stats=false", "--timeout="+timeout.String())
 	if err != nil {
 		zaplog.LOG.Debug("reason:", zap.Error(err))
 
 		//假如能够顺利的转化为 json 结果，返回 issues
 		if res := parseMessage(rawMessage); res != nil {
-			return debugMessage(res), nil
+			return debugMessage(res)
 		}
 
 		//假如排除 warning 以后能够转化为 json 结果，也返回 issues
 		if res := parseSkipWarningMessage(rawMessage); res != nil {
-			return debugMessage(res), nil
+			return debugMessage(res)
 		}
 
 		//当代码有大错时，没法返回细致的 issues，这时就需要把这个大错显示出来
 		zaplog.SUG.Errorln("message:", string(rawMessage))
-		return nil, erero.Wro(err)
+		return &Result{
+			Reason:   err.Error(),
+			Result:   nil,
+			Warnings: nil,
+			Output:   nil,
+		}
 	}
 	lintResult := &printers.JSONResult{}
 	must.Done(json.Unmarshal(rawMessage, lintResult))
 	return debugMessage(&Result{
+		Reason:   "",
 		Result:   lintResult,
 		Warnings: nil,
 		Output:   rawMessage,
-	}), nil
+	})
 }
 
 func parseMessage(rawMessage []byte) *Result {
@@ -60,6 +69,7 @@ func parseMessage(rawMessage []byte) *Result {
 		return nil
 	}
 	return &Result{
+		Reason:   "",
 		Result:   lintResult,
 		Warnings: nil,
 		Output:   rawMessage,
@@ -109,16 +119,20 @@ func parseSkipWarningMessage(rawMessage []byte) *Result {
 		return nil
 	}
 	return &Result{
+		Reason:   "",
 		Result:   lintResult,
 		Warnings: warnings,
 		Output:   jsonOutput,
 	}
 }
 
-func DebugIssues(root string, issues []result.Issue) {
+func DebugIssues(root string, result *Result) {
 	commandLine := "cd " + root + " && golangci-lint run"
-	if len(issues) > 0 {
-		fmt.Println(eroticgo.BLUE.Sprint("--"))
+
+	fmt.Println(eroticgo.BLUE.Sprint("--"))
+	if result.Reason != "" {
+		fmt.Println(eroticgo.RED.Sprint(commandLine, "->", "exception-reason:", result.Reason))
+	} else if issues := result.Result.Issues; len(issues) > 0 {
 		fmt.Println(eroticgo.RED.Sprint(commandLine), "->", "warning")
 		for _, issue := range issues {
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
@@ -143,10 +157,8 @@ func DebugIssues(root string, issues []result.Issue) {
 
 			fmt.Println(eroticgo.RED.Sprint("res:", res))
 		}
-		fmt.Println(eroticgo.BLUE.Sprint("--"))
 	} else {
-		fmt.Println(eroticgo.BLUE.Sprint("--"))
 		fmt.Println(eroticgo.GREEN.Sprint(commandLine, "->", "success"))
-		fmt.Println(eroticgo.BLUE.Sprint("--"))
 	}
+	fmt.Println(eroticgo.BLUE.Sprint("--"))
 }

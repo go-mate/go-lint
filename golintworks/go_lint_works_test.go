@@ -1,16 +1,17 @@
-package golintsubcmd_test
+package golintworks_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/go-mate/go-lint/golintsubcmd"
+	"github.com/go-mate/go-lint/golintworks"
 	"github.com/go-mate/go-work/workcfg"
+	"github.com/yyle88/neatjson/neatjsons"
 	"github.com/yyle88/osexec"
 	"github.com/yyle88/runpath"
 )
 
-func TestRunDebug(t *testing.T) {
+func TestRun(t *testing.T) {
 	projectPath := runpath.PARENT.Up(1)
 	t.Log(projectPath)
 
@@ -22,5 +23,8 @@ func TestRunDebug(t *testing.T) {
 	}
 	config := workcfg.NewWorksExec(execConfig, workspaces)
 
-	golintsubcmd.Run(config, time.Minute)
+	resMap := golintworks.Run(config, time.Minute)
+	t.Log(neatjsons.S(resMap))
+
+	golintworks.DebugIssues(config, resMap)
 }

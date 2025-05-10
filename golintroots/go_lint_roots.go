@@ -1,4 +1,4 @@
-package goworkcilint
+package golintroots
 
 import (
 	"fmt"
@@ -18,26 +18,37 @@ type Result struct {
 	Result *golangcilint.Result
 }
 
+func (R *Result) Success() bool {
+	return R.Reason == "" && R.Result.Success()
+}
+
 func Run(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) map[string]*Result {
 	var resMap = map[string]*Result{}
 	for _, path := range roots {
-		lintResult, err := golangcilint.Run(execConfig, path, timeout)
-		if err != nil {
-			fmt.Println(eroticgo.RED.Sprint("path:", path, "reason:", err))
+		result := golangcilint.Run(execConfig, path, timeout)
+		if result.Reason != "" {
+			fmt.Println(eroticgo.RED.Sprint("path:", path, "reason:", result.Reason))
 			resMap[path] = &Result{
 				Path:   path,
-				Reason: err.Error(),
+				Reason: result.Reason,
 				Result: nil,
 			}
 			continue
-		}
-		if len(lintResult.Result.Issues) > 0 {
+		} else if len(result.Result.Issues) > 0 {
 			fmt.Println(eroticgo.RED.Sprint("path:", path, "issues:"))
-			golangcilint.DebugIssues(path, lintResult.Result.Issues)
+			golangcilint.DebugIssues(path, result)
 			resMap[path] = &Result{
 				Path:   path,
 				Reason: "",
-				Result: lintResult,
+				Result: result,
+			}
+			continue
+		} else {
+			fmt.Println(eroticgo.GREEN.Sprint("path:", path, "return:", "success"))
+			resMap[path] = &Result{
+				Path:   path,
+				Reason: "",
+				Result: result,
 			}
 			continue
 		}
@@ -46,11 +57,20 @@ func Run(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) m
 }
 
 func DebugIssues(roots []string, resMap map[string]*Result) {
-	if len(resMap) > 0 {
-		var wrongCount int
-
+	var wrongCount int
+	for _, result := range resMap {
+		if !result.Success() {
+			wrongCount++
+		}
+	}
+	if wrongCount <= 0 {
+		eroticgo.GREEN.ShowMessage("SUCCESS")
+		return
+	} else {
+		//首先显示详细的
+		eroticgo.PINK.ShowMessage("FAILED", wrongCount, "WRONGS")
 		{
-			eroticgo.RED.ShowMessage("FAILED", len(resMap), "WRONGS")
+			eroticgo.RED.ShowMessage("ERRORS:")
 
 			var cnt int
 			var idx int
@@ -66,21 +86,24 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 				fmt.Println(eroticgo.BLUE.Sprint("cd", path, "&&", strings.Join([]string{"golangci-lint run --output.json.path=stdout --show-stats=false --timeout=5m0s"}, " ")))
 				fmt.Println(eroticgo.BLUE.Sprint("--"))
 				if res.Reason != "" {
-					cnt++
 					fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-reason:", res.Reason))
+					cnt++
 				} else if issues := res.Result.Result.Issues; len(issues) > 0 {
+					fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-issues:", len(issues)))
 					cnt += len(issues)
-					golangcilint.DebugIssues(path, issues)
+					golangcilint.DebugIssues(path, res.Result)
+				} else {
+					fmt.Println(eroticgo.GREEN.Sprint("success"))
 				}
 				fmt.Println(eroticgo.BLUE.Sprint("--"))
 			}
 
 			eroticgo.RED.ShowMessage("FAILED", cnt, "ERRORS")
-
-			wrongCount = cnt
 		}
 
-		if wrongCount > 0 {
+		//接着显示缩略的
+		eroticgo.PINK.ShowMessage("FAILED", wrongCount, "WRONGS")
+		{
 			eroticgo.RED.ShowMessage("ERRORS:")
 
 			var cnt int
@@ -91,18 +114,23 @@ func DebugIssues(roots []string, resMap map[string]*Result) {
 				}
 				if res.Reason != "" {
 					fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
-					cnt++
 					fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-reason:", res.Reason))
+					cnt++
 				} else if issues := res.Result.Result.Issues; len(issues) > 0 {
+					fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
+					fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-issues:", len(issues)))
+					fmt.Println(eroticgo.RED.Sprint("--"))
 					for _, issue := range issues {
-						fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", path))
 						cnt++
 						fmt.Println(eroticgo.RED.Sprint("pos:", filepath.Join(path, issue.Pos.Filename)+":"+strconv.Itoa(issue.Pos.Line)+":"))
 					}
+				} else {
+					continue
 				}
+				fmt.Println(eroticgo.RED.Sprint("--"))
 			}
+
+			eroticgo.RED.ShowMessage("FAILED", cnt, "ERRORS")
 		}
-	} else {
-		eroticgo.GREEN.ShowMessage("SUCCESS")
 	}
 }

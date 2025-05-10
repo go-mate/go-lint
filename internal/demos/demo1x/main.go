@@ -5,20 +5,23 @@ import (
 	"time"
 
 	"github.com/go-mate/go-lint/golangcilint"
+	"github.com/yyle88/must"
 	"github.com/yyle88/must/mustslice"
 	"github.com/yyle88/osexec"
 	"github.com/yyle88/osexistpath/osmustexist"
-	"github.com/yyle88/rese"
 	"github.com/yyle88/runpath"
+	"github.com/yyle88/zaplog"
 )
 
 // go run main.go
 func main() {
-	path := runpath.PARENT.Up(3)
-	osmustexist.MustFile(filepath.Join(path, "go.mod"))
+	projectPath := runpath.PARENT.Up(3)
+	osmustexist.MustFile(filepath.Join(projectPath, "go.mod"))
+	zaplog.SUG.Debugln(projectPath)
 
-	res := rese.P1(golangcilint.Run(osexec.NewCommandConfig().WithDebugMode(true), path, time.Minute*5))
-	mustslice.Have(res.Output)
-	mustslice.None(res.Warnings)
-	mustslice.None(res.Result.Issues)
+	result := golangcilint.Run(osexec.NewCommandConfig().WithDebugMode(true), projectPath, time.Minute*5)
+	must.None(result.Reason)
+	mustslice.Have(result.Output)
+	mustslice.None(result.Warnings)
+	mustslice.None(result.Result.Issues)
 }
