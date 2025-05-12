@@ -139,31 +139,35 @@ func (R *Result) DebugIssues() {
 		fmt.Println(eroticgo.RED.Sprint(commandLine, "->", "exception-reason:", R.Reason))
 	} else if issues := R.Result.Issues; len(issues) > 0 {
 		fmt.Println(eroticgo.RED.Sprint(commandLine), "->", "warning")
-		for _, issue := range issues {
+		for _, issueItem := range issues {
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
 
-			fmt.Println(eroticgo.RED.Sprint("pos:", filepath.Join(must.Nice(R.BasePath), issue.Pos.Filename)+":"+strconv.Itoa(issue.Pos.Line)+":"))
-
-			fmt.Println(eroticgo.YELLOW.Sprint("--"))
-
-			fmt.Println(eroticgo.RED.Sprint("pos:", issue.Pos.Filename+":"+strconv.Itoa(issue.Pos.Line)+":"))
+			fmt.Println(eroticgo.RED.Sprint("pos:", filepath.Join(must.Nice(R.BasePath), issueItem.Pos.Filename)+":"+strconv.Itoa(issueItem.Pos.Line)+":"))
 
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
 
-			fmt.Println(eroticgo.RED.Sprint(strings.TrimSpace(issue.Text)))
+			fmt.Println(eroticgo.RED.Sprint("pos:", issueItem.Pos.Filename+":"+strconv.Itoa(issueItem.Pos.Line)+":"))
 
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
 
-			fmt.Println(eroticgo.RED.Sprint(strings.TrimSpace(issue.Description())))
+			fmt.Println(eroticgo.RED.Sprint(strings.TrimSpace(issueItem.Text)))
 
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
 
-			res := neatjsons.S(issue)
+			fmt.Println(eroticgo.RED.Sprint(strings.TrimSpace(issueItem.Description())))
+
+			fmt.Println(eroticgo.YELLOW.Sprint("--"))
+
+			res := neatjsons.S(issueItem)
 
 			fmt.Println(eroticgo.RED.Sprint("res:", res))
 		}
 	} else {
+		fmt.Println(eroticgo.GREEN.Sprint("--"))
+		fmt.Println(eroticgo.GREEN.Sprint("--"))
 		fmt.Println(eroticgo.GREEN.Sprint(commandLine, "->", "success"))
+		fmt.Println(eroticgo.GREEN.Sprint("--"))
+		fmt.Println(eroticgo.GREEN.Sprint("--"))
 	}
 	fmt.Println(eroticgo.BLUE.Sprint("--"))
 }

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-mate/go-lint/golint"
-	"github.com/go-mate/go-work/workcfg"
+	"github.com/go-mate/go-work/workspace"
 	"github.com/stretchr/testify/require"
 	"github.com/yyle88/osexec"
 	"github.com/yyle88/osexistpath/osmustexist"
@@ -38,8 +38,8 @@ func TestRootsRun(t *testing.T) {
 
 func TestWorksRun(t *testing.T) {
 	execConfig := osexec.NewExecConfig()
-	workspaces := []*workcfg.Workspace{
-		workcfg.NewWorkspace("", []string{projectPath}),
+	workspaces := []*workspace.Workspace{
+		workspace.NewWorkspace("", []string{projectPath}),
 	}
 	result := golint.WorksRun(execConfig, workspaces, 5*time.Minute)
 	result.DebugIssues()

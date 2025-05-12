@@ -6,7 +6,8 @@ import (
 	"github.com/emirpasic/gods/v2/maps/linkedhashmap"
 	"github.com/go-mate/go-lint/golangcilint"
 	"github.com/go-mate/go-lint/golintroots"
-	"github.com/go-mate/go-work/workcfg"
+	"github.com/go-mate/go-work/worksexec"
+	"github.com/go-mate/go-work/workspace"
 	"github.com/spf13/cobra"
 	"github.com/yyle88/eroticgo"
 	"github.com/yyle88/neatjson/neatjsons"
@@ -15,7 +16,7 @@ import (
 	"github.com/yyle88/zaplog"
 )
 
-func NewCmd(config *workcfg.WorksExec) *cobra.Command {
+func NewCmd(config *worksexec.WorksExec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "run",
 		Short: "golangci-lint run",
@@ -44,7 +45,7 @@ func (R *Result) GetMap() *linkedhashmap.Map[string, *golangcilint.Result] {
 	return R.resMap
 }
 
-func Run(execConfig *osexec.ExecConfig, workspaces []*workcfg.Workspace, timeout time.Duration) *Result {
+func Run(execConfig *osexec.ExecConfig, workspaces []*workspace.Workspace, timeout time.Duration) *Result {
 	zaplog.SUG.Debugln("golangci-lint run", "WORKSPACES", neatjsons.S(workspaces))
 
 	output := rese.V1(execConfig.ShallowClone().Exec("golangci-lint", "version"))

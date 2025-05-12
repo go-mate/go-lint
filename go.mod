@@ -4,7 +4,7 @@ go 1.22.8
 
 require (
 	github.com/emirpasic/gods/v2 v2.0.0-alpha
-	github.com/go-mate/go-work v0.0.4
+	github.com/go-mate/go-work v0.0.5
 	github.com/golangci/golangci-lint v1.63.5-0.20250204215304-2b24c4ea48bf
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0

@@ -6,7 +6,7 @@ import (
 	"github.com/go-mate/go-lint/golangcilint"
 	"github.com/go-mate/go-lint/golintroots"
 	"github.com/go-mate/go-lint/golintworks"
-	"github.com/go-mate/go-work/workcfg"
+	"github.com/go-mate/go-work/workspace"
 	"github.com/yyle88/osexec"
 )
 
@@ -22,7 +22,7 @@ func RootsRun(execConfig *osexec.ExecConfig, roots []string, timeout time.Durati
 	return result
 }
 
-func WorksRun(execConfig *osexec.ExecConfig, workspaces []*workcfg.Workspace, timeout time.Duration) *golintworks.Result {
+func WorksRun(execConfig *osexec.ExecConfig, workspaces []*workspace.Workspace, timeout time.Duration) *golintworks.Result {
 	result := golintworks.Run(execConfig, workspaces, timeout)
 	result.DebugIssues()
 	return result

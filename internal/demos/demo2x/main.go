@@ -4,7 +4,8 @@ import (
 	"path/filepath"
 
 	"github.com/go-mate/go-lint/golintworks"
-	"github.com/go-mate/go-work/workcfg"
+	"github.com/go-mate/go-work/worksexec"
+	"github.com/go-mate/go-work/workspace"
 	"github.com/spf13/cobra"
 	"github.com/yyle88/must"
 	"github.com/yyle88/osexec"
@@ -20,12 +21,12 @@ func main() {
 	osmustexist.MustFile(filepath.Join(projectPath, "go.mod"))
 	zaplog.SUG.Debugln(projectPath)
 
-	workspace := workcfg.NewWorkspace("", []string{projectPath})
+	wsp := workspace.NewWorkspace("", []string{projectPath})
 
 	execConfig := osexec.NewCommandConfig().WithBash().WithDebugMode(true)
-	workspaces := []*workcfg.Workspace{workspace}
+	workspaces := []*workspace.Workspace{wsp}
 
-	config := workcfg.NewWorksExec(execConfig, workspaces)
+	config := worksexec.NewWorksExec(execConfig, workspaces)
 
 	// 定义根命令
 	var rootCmd = &cobra.Command{
