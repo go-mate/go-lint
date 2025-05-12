@@ -17,5 +17,6 @@ func TestRun(t *testing.T) {
 	require.Empty(t, result.Reason)
 	t.Log(neatjsons.S(result))
 
-	golangcilint.DebugIssues(root, result)
+	result.DebugIssues()
+	require.True(t, result.Success())
 }

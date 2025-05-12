@@ -31,14 +31,17 @@ func TestRun(t *testing.T) {
 }
 
 func TestRootsRun(t *testing.T) {
-	resMap := golint.RootsRun(osexec.NewExecConfig().WithDebug(), []string{projectPath}, 5*time.Minute)
-	require.Len(t, resMap, 0)
+	result := golint.RootsRun(osexec.NewExecConfig().WithDebug(), []string{projectPath}, 5*time.Minute)
+	result.DebugIssues()
+	require.True(t, result.Success())
 }
 
 func TestWorksRun(t *testing.T) {
-	worksExec := workcfg.NewWorksExec(osexec.NewExecConfig(), []*workcfg.Workspace{
+	execConfig := osexec.NewExecConfig()
+	workspaces := []*workcfg.Workspace{
 		workcfg.NewWorkspace("", []string{projectPath}),
-	})
-	resMap := golint.WorksRun(worksExec, 5*time.Minute)
-	require.Len(t, resMap, 0)
+	}
+	result := golint.WorksRun(execConfig, workspaces, 5*time.Minute)
+	result.DebugIssues()
+	require.True(t, result.Success())
 }

@@ -18,10 +18,11 @@ import (
 )
 
 type Result struct {
-	Reason   string //when error occurs, set reason to this field
+	BasePath string
+	Reason   string //when error occurs, set reason to this field (reason = err.Error())
 	Result   *printers.JSONResult
 	Warnings []string
-	Output   []byte
+	Output   json.RawMessage
 }
 
 func (R *Result) Success() bool {
@@ -35,17 +36,20 @@ func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Res
 
 		//假如能够顺利的转化为 json 结果，返回 issues
 		if res := parseMessage(rawMessage); res != nil {
+			res.BasePath = path
 			return debugMessage(res)
 		}
 
 		//假如排除 warning 以后能够转化为 json 结果，也返回 issues
 		if res := parseSkipWarningMessage(rawMessage); res != nil {
+			res.BasePath = path
 			return debugMessage(res)
 		}
 
 		//当代码有大错时，没法返回细致的 issues，这时就需要把这个大错显示出来
 		zaplog.SUG.Errorln("message:", string(rawMessage))
 		return &Result{
+			BasePath: path,
 			Reason:   err.Error(),
 			Result:   nil,
 			Warnings: nil,
@@ -55,6 +59,7 @@ func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Res
 	lintResult := &printers.JSONResult{}
 	must.Done(json.Unmarshal(rawMessage, lintResult))
 	return debugMessage(&Result{
+		BasePath: path,
 		Reason:   "",
 		Result:   lintResult,
 		Warnings: nil,
@@ -126,18 +131,18 @@ func parseSkipWarningMessage(rawMessage []byte) *Result {
 	}
 }
 
-func DebugIssues(root string, result *Result) {
-	commandLine := "cd " + root + " && golangci-lint run"
+func (R *Result) DebugIssues() {
+	commandLine := "cd " + must.Nice(R.BasePath) + " && golangci-lint run"
 
 	fmt.Println(eroticgo.BLUE.Sprint("--"))
-	if result.Reason != "" {
-		fmt.Println(eroticgo.RED.Sprint(commandLine, "->", "exception-reason:", result.Reason))
-	} else if issues := result.Result.Issues; len(issues) > 0 {
+	if R.Reason != "" {
+		fmt.Println(eroticgo.RED.Sprint(commandLine, "->", "exception-reason:", R.Reason))
+	} else if issues := R.Result.Issues; len(issues) > 0 {
 		fmt.Println(eroticgo.RED.Sprint(commandLine), "->", "warning")
 		for _, issue := range issues {
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
 
-			fmt.Println(eroticgo.RED.Sprint("pos:", filepath.Join(root, issue.Pos.Filename)+":"+strconv.Itoa(issue.Pos.Line)+":"))
+			fmt.Println(eroticgo.RED.Sprint("pos:", filepath.Join(must.Nice(R.BasePath), issue.Pos.Filename)+":"+strconv.Itoa(issue.Pos.Line)+":"))
 
 			fmt.Println(eroticgo.YELLOW.Sprint("--"))
 
