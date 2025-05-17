@@ -52,7 +52,7 @@ require (
 	github.com/yyle88/mutexmap v1.0.13 // indirect
 	github.com/yyle88/printgo v1.0.5 // indirect
 	github.com/yyle88/sure v0.0.38 // indirect
-	github.com/yyle88/syntaxgo v0.0.48 // indirect
+	github.com/yyle88/syntaxgo v0.0.50 // indirect
 	github.com/yyle88/tern v0.0.8 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect

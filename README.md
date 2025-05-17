@@ -13,6 +13,26 @@
 # go-lint
 Execute `golangci-lint run` with Golang's `os/exec`.
 
+# install
+
+```bash
+go install github.com/go-mate/go-lint/cmd/go-lint@latest
+```
+
+# command
+
+#### Single Project
+```bash
+cd project-path && go-lint
+```
+Analyze and report lint issues for a Go project.
+
+#### Multiple Subprojects
+```bash
+cd awesome-path && go-lint
+```
+Analyze and report lint issues for all Go subprojects within the given path.
+
 **Supported version:**
 ```bash
 golangci-lint version
