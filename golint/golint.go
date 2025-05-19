@@ -10,20 +10,32 @@ import (
 	"github.com/yyle88/osexec"
 )
 
-func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *golangcilint.Result {
+func Run(path string, timeout time.Duration) *golangcilint.Result {
+	execConfig := osexec.NewExecConfig().WithDebugMode(debugModeOpen)
+
 	result := golangcilint.Run(execConfig, path, timeout)
-	result.DebugIssues()
+	if debugModeOpen {
+		result.DebugIssues()
+	}
 	return result
 }
 
-func RootsRun(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) *golintroots.Result {
+func RootsRun(roots []string, timeout time.Duration) *golintroots.Result {
+	execConfig := osexec.NewExecConfig().WithDebugMode(debugModeOpen)
+
 	result := golintroots.Run(execConfig, roots, timeout)
-	result.DebugIssues()
+	if debugModeOpen {
+		result.DebugIssues()
+	}
 	return result
 }
 
-func WorksRun(execConfig *osexec.ExecConfig, workspaces []*workspace.Workspace, timeout time.Duration) *golintworks.Result {
+func WorksRun(workspaces []*workspace.Workspace, timeout time.Duration) *golintworks.Result {
+	execConfig := osexec.NewExecConfig().WithDebugMode(debugModeOpen)
+
 	result := golintworks.Run(execConfig, workspaces, timeout)
-	result.DebugIssues()
+	if debugModeOpen {
+		result.DebugIssues()
+	}
 	return result
 }

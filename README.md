@@ -25,13 +25,13 @@ go install github.com/go-mate/go-lint/cmd/go-lint@latest
 ```bash
 cd project-path && go-lint
 ```
-Analyze and report lint issues for a Go project.
+Analyze and report lint issues for the Go project.
 
 #### Multiple Subprojects
 ```bash
 cd awesome-path && go-lint
 ```
-Analyze and report lint issues for all Go subprojects within the given path.
+Analyze and report lint issues for Go subprojects.
 
 **Supported version:**
 ```bash
