@@ -14,7 +14,7 @@ import (
 func TestRun(t *testing.T) {
 	root := runpath.PARENT.Path()
 	result := golangcilint.Run(osexec.NewExecConfig().WithDebug(), root, 5*time.Minute)
-	require.Empty(t, result.Reason)
+	require.NoError(t, result.Cause)
 	t.Log(neatjsons.S(result))
 
 	result.DebugIssues()

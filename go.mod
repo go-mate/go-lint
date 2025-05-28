@@ -8,14 +8,14 @@ require (
 	github.com/golangci/golangci-lint v1.63.5-0.20250204215304-2b24c4ea48bf
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	github.com/yyle88/eroticgo v0.0.3
+	github.com/yyle88/eroticgo v0.0.4
 	github.com/yyle88/must v0.0.23
 	github.com/yyle88/neatjson v0.0.12
 	github.com/yyle88/osexec v0.0.28
 	github.com/yyle88/osexistpath v0.0.17
 	github.com/yyle88/rese v0.0.10
 	github.com/yyle88/runpath v1.0.23
-	github.com/yyle88/zaplog v0.0.22
+	github.com/yyle88/zaplog v0.0.23
 	go.uber.org/zap v1.27.0
 )
 

@@ -19,14 +19,14 @@ import (
 
 type Result struct {
 	BasePath string
-	Reason   string //when error occurs, set reason to this field (reason = err.Error())
+	Cause    error // cause of the command "golangci-lint run" failure
 	Result   *printers.JSONResult
 	Warnings []string
 	Output   json.RawMessage
 }
 
 func (R *Result) Success() bool {
-	return R.Reason == "" && len(R.Warnings) == 0 && len(R.Result.Issues) == 0
+	return R.Cause == nil && len(R.Warnings) == 0 && len(R.Result.Issues) == 0
 }
 
 func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Result {
@@ -50,7 +50,7 @@ func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Res
 		zaplog.SUG.Errorln("message:", string(rawMessage))
 		return &Result{
 			BasePath: path,
-			Reason:   err.Error(),
+			Cause:    err,
 			Result:   nil,
 			Warnings: nil,
 			Output:   nil,
@@ -60,7 +60,7 @@ func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Res
 	must.Done(json.Unmarshal(rawMessage, lintResult))
 	return debugMessage(&Result{
 		BasePath: path,
-		Reason:   "",
+		Cause:    nil,
 		Result:   lintResult,
 		Warnings: nil,
 		Output:   rawMessage,
@@ -74,7 +74,7 @@ func parseMessage(rawMessage []byte) *Result {
 		return nil
 	}
 	return &Result{
-		Reason:   "",
+		Cause:    nil,
 		Result:   lintResult,
 		Warnings: nil,
 		Output:   rawMessage,
@@ -124,7 +124,7 @@ func parseSkipWarningMessage(rawMessage []byte) *Result {
 		return nil
 	}
 	return &Result{
-		Reason:   "",
+		Cause:    nil,
 		Result:   lintResult,
 		Warnings: warnings,
 		Output:   jsonOutput,
@@ -135,8 +135,8 @@ func (R *Result) DebugIssues() {
 	commandLine := "cd " + must.Nice(R.BasePath) + " && golangci-lint run"
 
 	fmt.Println(eroticgo.BLUE.Sprint("--"))
-	if R.Reason != "" {
-		fmt.Println(eroticgo.RED.Sprint(commandLine, "->", "exception-reason:", R.Reason))
+	if R.Cause != nil {
+		fmt.Println(eroticgo.RED.Sprint(commandLine, "->", "exception-cause:", R.Cause))
 	} else if issues := R.Result.Issues; len(issues) > 0 {
 		fmt.Println(eroticgo.RED.Sprint(commandLine), "->", "warning")
 		for _, issueItem := range issues {

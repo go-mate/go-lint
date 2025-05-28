@@ -67,7 +67,7 @@ func DebugIssues1(resMap *linkedhashmap.Map[string, *golangcilint.Result]) {
 	if wrongCount == 0 {
 		return
 	}
-	eroticgo.PINK.ShowMessage("FAILED", wrongCount, "WRONGS")
+	eroticgo.AMBER.ShowMessage("FAILED", wrongCount, "WRONGS")
 	{
 		eroticgo.RED.ShowMessage("ERRORS:")
 
@@ -77,8 +77,8 @@ func DebugIssues1(resMap *linkedhashmap.Map[string, *golangcilint.Result]) {
 			fmt.Println(eroticgo.RED.Sprint("(", idx, ")", "path:", res.BasePath))
 			fmt.Println(eroticgo.BLUE.Sprint("cd", res.BasePath, "&&", strings.Join([]string{"golangci-lint run --output.json.path=stdout --show-stats=false --timeout=5m0s"}, " ")))
 			fmt.Println(eroticgo.BLUE.Sprint("--"))
-			if res.Reason != "" {
-				fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-reason:", res.Reason))
+			if res.Cause != nil {
+				fmt.Println(eroticgo.RED.Sprint("command-execute-exception-cause:", res.Cause))
 				cnt++
 			} else if issues := res.Result.Issues; len(issues) > 0 {
 				fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-issues:", len(issues)))
@@ -89,9 +89,9 @@ func DebugIssues1(resMap *linkedhashmap.Map[string, *golangcilint.Result]) {
 			}
 			fmt.Println(eroticgo.BLUE.Sprint("--"))
 		}
-
-		eroticgo.RED.ShowMessage("FAILED", cnt, "ERRORS")
+		eroticgo.LIME.ShowMessage("FAILED", cnt, "ERRORS")
 	}
+	eroticgo.RED.ShowMessage("FAILED", wrongCount, "WRONGS")
 }
 
 func DebugIssues2(resMap *linkedhashmap.Map[string, *golangcilint.Result]) {
@@ -99,15 +99,15 @@ func DebugIssues2(resMap *linkedhashmap.Map[string, *golangcilint.Result]) {
 	if wrongCount == 0 {
 		return
 	}
-	eroticgo.PINK.ShowMessage("FAILED", wrongCount, "WRONGS")
+	eroticgo.AMBER.ShowMessage("FAILED", wrongCount, "WRONGS")
 	{
 		eroticgo.RED.ShowMessage("ERRORS:")
 
 		var cnt int
 		for _, res := range resMap.Values() {
-			if res.Reason != "" {
+			if res.Cause != nil {
 				fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", res.BasePath))
-				fmt.Println(eroticgo.RED.Sprint("command-execute-wrong-reason:", res.Reason))
+				fmt.Println(eroticgo.RED.Sprint("command-execute-exception-cause:", res.Cause))
 				cnt++
 			} else if issues := res.Result.Issues; len(issues) > 0 {
 				fmt.Println(eroticgo.RED.Sprint("(", cnt, ")", "path:", res.BasePath))
@@ -122,7 +122,7 @@ func DebugIssues2(resMap *linkedhashmap.Map[string, *golangcilint.Result]) {
 			}
 			fmt.Println(eroticgo.RED.Sprint("--"))
 		}
-
-		eroticgo.RED.ShowMessage("FAILED", cnt, "ERRORS")
+		eroticgo.LIME.ShowMessage("FAILED", cnt, "ERRORS")
 	}
+	eroticgo.RED.ShowMessage("FAILED", wrongCount, "WRONGS")
 }

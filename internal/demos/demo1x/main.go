@@ -20,7 +20,7 @@ func main() {
 	zaplog.SUG.Debugln(projectPath)
 
 	result := golangcilint.Run(osexec.NewCommandConfig().WithDebugMode(true), projectPath, time.Minute*5)
-	must.None(result.Reason)
+	must.Done(result.Cause)
 	mustslice.Have(result.Output)
 	mustslice.None(result.Warnings)
 	mustslice.None(result.Result.Issues)
