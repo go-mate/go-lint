@@ -23,7 +23,7 @@ func main() {
 
 	wsp := workspace.NewWorkspace("", []string{projectPath})
 
-	execConfig := osexec.NewCommandConfig().WithBash().WithDebugMode(true)
+	execConfig := osexec.NewCommandConfig().WithBash().WithDebug()
 	workspaces := []*workspace.Workspace{wsp}
 
 	config := worksexec.NewWorksExec(execConfig, workspaces)

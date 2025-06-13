@@ -30,7 +30,7 @@ func (R *Result) Success() bool {
 }
 
 func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Result {
-	rawMessage, err := execConfig.GetSubClone(path).Exec("golangci-lint", "run", "--output.json.path=stdout", "--show-stats=false", "--timeout="+timeout.String())
+	rawMessage, err := execConfig.SubConfig(path).Exec("golangci-lint", "run", "--output.json.path=stdout", "--show-stats=false", "--timeout="+timeout.String())
 	if err != nil {
 		zaplog.LOG.Debug("reason:", zap.Error(err))
 

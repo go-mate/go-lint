@@ -19,7 +19,7 @@ func main() {
 	osmustexist.MustFile(filepath.Join(projectPath, "go.mod"))
 	zaplog.SUG.Debugln(projectPath)
 
-	result := golangcilint.Run(osexec.NewCommandConfig().WithDebugMode(true), projectPath, time.Minute*5)
+	result := golangcilint.Run(osexec.NewCommandConfig().WithDebug(), projectPath, time.Minute*5)
 	must.Done(result.Cause)
 	mustslice.Have(result.Output)
 	mustslice.None(result.Warnings)

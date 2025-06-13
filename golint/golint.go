@@ -11,7 +11,7 @@ import (
 )
 
 func Run(path string, timeout time.Duration) *golangcilint.Result {
-	execConfig := osexec.NewExecConfig().WithDebugMode(debugModeOpen)
+	execConfig := osexec.NewExecConfig().WithDebugMode(osexec.NewDebugMode(debugModeOpen))
 
 	result := golangcilint.Run(execConfig, path, timeout)
 	if debugModeOpen {
@@ -21,7 +21,7 @@ func Run(path string, timeout time.Duration) *golangcilint.Result {
 }
 
 func RootsRun(roots []string, timeout time.Duration) *golintroots.Result {
-	execConfig := osexec.NewExecConfig().WithDebugMode(debugModeOpen)
+	execConfig := osexec.NewExecConfig().WithDebugMode(osexec.NewDebugMode(debugModeOpen))
 
 	result := golintroots.Run(execConfig, roots, timeout)
 	if debugModeOpen {
@@ -31,7 +31,7 @@ func RootsRun(roots []string, timeout time.Duration) *golintroots.Result {
 }
 
 func WorksRun(workspaces []*workspace.Workspace, timeout time.Duration) *golintworks.Result {
-	execConfig := osexec.NewExecConfig().WithDebugMode(debugModeOpen)
+	execConfig := osexec.NewExecConfig().WithDebugMode(osexec.NewDebugMode(debugModeOpen))
 
 	result := golintworks.Run(execConfig, workspaces, timeout)
 	if debugModeOpen {

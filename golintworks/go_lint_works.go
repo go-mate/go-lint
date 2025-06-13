@@ -48,7 +48,7 @@ func (R *Result) GetMap() *linkedhashmap.Map[string, *golangcilint.Result] {
 func Run(execConfig *osexec.ExecConfig, workspaces []*workspace.Workspace, timeout time.Duration) *Result {
 	zaplog.SUG.Debugln("golangci-lint run", "WORKSPACES", neatjsons.S(workspaces))
 
-	output := rese.V1(execConfig.ShallowClone().Exec("golangci-lint", "version"))
+	output := rese.V1(execConfig.NewConfig().Exec("golangci-lint", "version"))
 	zaplog.SUG.Debugln(string(output))
 
 	resMap := linkedhashmap.New[string, *golangcilint.Result]()

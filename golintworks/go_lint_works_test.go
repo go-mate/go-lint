@@ -15,7 +15,7 @@ func TestRun(t *testing.T) {
 	projectPath := runpath.PARENT.Up(1)
 	t.Log(projectPath)
 
-	execConfig := osexec.NewCommandConfig().WithDebugMode(true)
+	execConfig := osexec.NewCommandConfig().WithDebug()
 	workspaces := []*workspace.Workspace{
 		workspace.NewWorkspace("", []string{projectPath}),
 	}
