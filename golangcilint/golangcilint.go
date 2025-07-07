@@ -37,13 +37,13 @@ func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Res
 		//假如能够顺利的转化为 json 结果，返回 issues
 		if res := parseMessage(rawMessage); res != nil {
 			res.BasePath = path
-			return debugMessage(res)
+			return debugMessage(execConfig, res)
 		}
 
 		//假如排除 warning 以后能够转化为 json 结果，也返回 issues
 		if res := parseSkipWarningMessage(rawMessage); res != nil {
 			res.BasePath = path
-			return debugMessage(res)
+			return debugMessage(execConfig, res)
 		}
 
 		//当代码有大错时，没法返回细致的 issues，这时就需要把这个大错显示出来
@@ -58,13 +58,14 @@ func Run(execConfig *osexec.ExecConfig, path string, timeout time.Duration) *Res
 	}
 	lintResult := &printers.JSONResult{}
 	must.Done(json.Unmarshal(rawMessage, lintResult))
-	return debugMessage(&Result{
+	res := &Result{
 		BasePath: path,
 		Cause:    nil,
 		Result:   lintResult,
 		Warnings: nil,
 		Output:   rawMessage,
-	})
+	}
+	return debugMessage(execConfig, res)
 }
 
 func parseMessage(rawMessage []byte) *Result {
@@ -81,8 +82,10 @@ func parseMessage(rawMessage []byte) *Result {
 	}
 }
 
-func debugMessage(res *Result) *Result {
-	zaplog.SUG.Debugln("message:", neatjsons.SxB(res.Output))
+func debugMessage(config *osexec.ExecConfig, res *Result) *Result {
+	if config.IsShowOutputs() {
+		zaplog.SUG.Debugln("message:", neatjsons.SxB(res.Output))
+	}
 	for _, warning := range res.Warnings {
 		zaplog.SUG.Warnln("warning:", warning)
 	}
@@ -163,11 +166,7 @@ func (R *Result) DebugIssues() {
 			fmt.Println(eroticgo.RED.Sprint("res:", res))
 		}
 	} else {
-		fmt.Println(eroticgo.GREEN.Sprint("--"))
-		fmt.Println(eroticgo.GREEN.Sprint("--"))
 		fmt.Println(eroticgo.GREEN.Sprint(commandLine, "->", "success"))
-		fmt.Println(eroticgo.GREEN.Sprint("--"))
-		fmt.Println(eroticgo.GREEN.Sprint("--"))
 	}
 	fmt.Println(eroticgo.BLUE.Sprint("--"))
 }
