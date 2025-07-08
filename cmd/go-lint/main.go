@@ -51,7 +51,14 @@ func newRunCmd(workPath string) *cobra.Command {
 
 func run(workPath string, debugMode bool) {
 	golint.SetDebugMode(debugMode)
-	modulePaths := modulepath.GetModulePaths(workPath, modulepath.NewOptions().WithDebugMode(debugMode))
+	config := modulepath.NewOptions().
+		WithIncludeCurrentPackage(true).
+		WithIncludeSubModules(true).
+		WithExcludeNoGo(true).
+		WithDebugMode(debugMode)
+	must.False(config.IncludeCurrentProject) //假如用户真想给项目做lint就定位到项目目录，这里不lint整个项目，而只关注当前包
+	must.True(config.IncludeCurrentPackage)
+	modulePaths := modulepath.GetModulePaths(workPath, config)
 	result := golint.RootsRun(modulePaths, time.Minute*5)
 	result.DebugIssues()
 }
