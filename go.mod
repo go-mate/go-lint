@@ -5,9 +5,11 @@ go 1.22.8
 require (
 	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/go-mate/go-work v0.0.9
+	github.com/gofrs/flock v0.12.1
 	github.com/golangci/golangci-lint v1.63.5-0.20250204215304-2b24c4ea48bf
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
+	github.com/yyle88/erero v1.0.23
 	github.com/yyle88/eroticgo v0.0.4
 	github.com/yyle88/must v0.0.25
 	github.com/yyle88/neatjson v0.0.12
@@ -48,7 +50,6 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/yyle88/done v1.0.26 // indirect
-	github.com/yyle88/erero v1.0.23 // indirect
 	github.com/yyle88/mutexmap v1.0.14 // indirect
 	github.com/yyle88/printgo v1.0.5 // indirect
 	github.com/yyle88/sure v0.0.40 // indirect
