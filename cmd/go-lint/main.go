@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-mate/go-lint/golint"
-	"github.com/go-mate/go-work/modulepath"
+	"github.com/go-mate/go-work/workspath"
 	"github.com/spf13/cobra"
 	"github.com/yyle88/eroticgo"
 	"github.com/yyle88/must"
@@ -51,14 +51,14 @@ func newRunCmd(workPath string) *cobra.Command {
 
 func run(workPath string, debugMode bool) {
 	golint.SetDebugMode(debugMode)
-	config := modulepath.NewOptions().
+	config := workspath.NewOptions().
 		WithIncludeCurrentPackage(true).
 		WithIncludeSubModules(true).
 		WithExcludeNoGo(true).
 		WithDebugMode(debugMode)
 	must.False(config.IncludeCurrentProject) //假如用户真想给项目做lint就定位到项目目录，这里不lint整个项目，而只关注当前包
 	must.True(config.IncludeCurrentPackage)
-	modulePaths := modulepath.GetModulePaths(workPath, config)
+	modulePaths := workspath.GetModulePaths(workPath, config)
 	result := golint.RootsRun(modulePaths, time.Minute*5)
 	result.DebugIssues()
 }
