@@ -8,6 +8,8 @@
 package golint_test
 
 import (
+	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 	"time"
@@ -20,6 +22,7 @@ import (
 	"github.com/yyle88/rese"
 	"github.com/yyle88/runpath"
 	"github.com/yyle88/zaplog"
+	"go.uber.org/zap"
 )
 
 // projectPath holds the test project root path
@@ -31,15 +34,26 @@ var projectPath string
 
 // TestMain sets up the test environment and initializes projectPath
 // Validates that go.mod exists before running tests
+// Skips all tests when golangci-lint is not found in PATH
 //
 // TestMain 设置测试环境并初始化 projectPath
 // 在运行测试前验证 go.mod 存在
+// 当 PATH 中未找到 golangci-lint 时跳过所有测试
 func TestMain(m *testing.M) {
-	path := runpath.PARENT.Up(1)
-	osmustexist.MustFile(filepath.Join(path, "go.mod"))
-	zaplog.SUG.Debugln(path)
+	// Check whether golangci-lint is available
+	// 检查 golangci-lint 是否可用
+	path, err := exec.LookPath("golangci-lint")
+	if err != nil {
+		zaplog.SUG.Warnln("golangci-lint not found in PATH, skipping tests")
+		os.Exit(0)
+	}
+	zaplog.LOG.Debug("golangci-lint found in PATH", zap.String("path", path))
 
-	projectPath = path
+	modulePath := runpath.PARENT.Up(1)
+	osmustexist.MustFile(filepath.Join(modulePath, "go.mod"))
+	zaplog.SUG.Debugln(modulePath)
+
+	projectPath = modulePath
 	m.Run()
 }
 
