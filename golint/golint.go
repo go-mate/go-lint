@@ -8,10 +8,12 @@
 package golint
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/emirpasic/gods/v2/maps/linkedhashmap"
 	"github.com/go-mate/go-lint/golangcilint"
+	"github.com/yyle88/eroticgo"
 	"github.com/yyle88/osexec"
 )
 
@@ -61,9 +63,18 @@ func RootsRun(roots []string, timeout time.Duration) *Result {
 // 底层函数，在执行设置方面提供灵活性
 func BatchRun(execConfig *osexec.ExecConfig, roots []string, timeout time.Duration) *Result {
 	var resMap = linkedhashmap.New[string, *golangcilint.Result]()
-	for _, path := range roots {
+	for idx, path := range roots {
+		fmt.Println(eroticgo.BLUE.Sprint("(", idx, "/", len(roots), ")"))
+		// Show command before execution with progress
+		// 执行前显示命令和进度
+		golangcilint.ShowCommandMessage(path)
+
 		result := golangcilint.Run(execConfig, path, timeout)
 		resMap.Put(path, result)
+
+		// Show result immediately after each project with progress
+		// 每个项目检测后立即显示结果和进度
+		result.ShowOutlineMessage()
 	}
 	return NewResult(resMap)
 }

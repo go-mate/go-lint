@@ -180,6 +180,34 @@ func parseSkipWarningMessage(rawMessage []byte) *Result {
 	}
 }
 
+// ShowCommandMessage displays the command that will be executed
+// Shows the cd and golangci-lint command before execution
+//
+// ShowCommandMessage 显示将要执行的命令
+// 在执行前显示 cd 和 golangci-lint 命令
+func ShowCommandMessage(path string) {
+	fmt.Println(eroticgo.BLUE.Sprint("--"))
+	fmt.Println(eroticgo.BLUE.Sprint("cd", path, "&&", "golangci-lint run"))
+	fmt.Println(eroticgo.BLUE.Sprint("--"))
+}
+
+// ShowOutlineMessage displays a brief result message immediately after execution
+// Shows simple success/failure status without detailed issue breakdown
+//
+// ShowOutlineMessage 在执行后立即显示简要结果消息
+// 显示简单的成功/失败状态，不含详细问题分解
+func (R *Result) ShowOutlineMessage() {
+	fmt.Println(eroticgo.BLUE.Sprint("--"))
+	if R.Cause != nil {
+		fmt.Println(eroticgo.PINK.Sprint("CAUSE:", R.Cause))
+	} else if len(R.Result.Issues) > 0 {
+		fmt.Println(eroticgo.PINK.Sprint("ISSUES:", len(R.Result.Issues)))
+	} else {
+		fmt.Println(eroticgo.AQUA.Sprint("SUCCESS"))
+	}
+	fmt.Println(eroticgo.BLUE.Sprint("--"))
+}
+
 // DebugIssues displays comprehensive, colorized output of linting results
 // Shows command line, execution status, and detailed issue information with file positions
 // Provides user-friendly visualization of linting problems for easy navigation
